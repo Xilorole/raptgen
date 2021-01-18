@@ -1,7 +1,7 @@
 *.egg-info
 **/*.pyc
 
-out/*/*
+out/**
 !out/*/.gitkeep
 **/*-checkpoint.py
 **/.log
