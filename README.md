@@ -42,3 +42,25 @@ $ python3 scripts/bo.py \
     results/real_data/A_best.mdl \
     results/real_data/A_evaled.csv
 ```
+
+
+## Directory structure
+```
+.
+├── data
+│   ├── external
+│   ├── generated
+│   │   ├── 10motifs
+│   │   └── paired_motif
+│   └── sample
+├── results
+│   ├── generated
+│   │   ├── 10motifs
+│   │   └── paired_motif
+│   └── real_data
+├── scripts
+└── src
+    ├── data
+    ├── models
+    └── visualization
+```
