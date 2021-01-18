@@ -1,0 +1,44 @@
+# Supplementary code
+
+## Installation
+run
+
+```shell
+pip install -r requirements.txt
+```
+
+You also need to install `cairo` library to generate profile hmm image. For mac OS X, it can be installed by `brew install cairo && brew install pango`.
+
+
+
+## Quickstart
+
+### Evaluating multi-motifs
+```shell
+$ python3 scripts/10motif.py 
+```
+
+### Evaluating paired-motifs
+```shell
+$ python3 scripts/paired.py
+```
+
+### Evaluating real data
+```shell
+$ python3 scripts/real_data.py data/sample/sample.fasta
+```
+
+### Run GMM
+```shell
+$ python3 scripts/gmm.py \
+    data/sample/sample.fasta \
+    data/sample/cnn_phmm_vae.mdl
+```
+
+### Run BO
+```shell
+$ python3 scripts/bo.py \
+    data/external/A_4R.fastq \
+    results/real_data/A_best.mdl \
+    results/real_data/A_evaled.csv
+```
