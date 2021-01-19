@@ -25,7 +25,6 @@ class State(IntEnum):
     I = 1
     D = 2
 
-
 class Transition(IntEnum):
     M2M = 0
     M2I = 1
@@ -35,21 +34,6 @@ class Transition(IntEnum):
     D2M = 5
     D2D = 6
 
-
-def one_hot_index(seq):
-    return ["ATGCN".index(i) for i in seq]
-
-# one_hot_encodeを
-
-
-def one_hot_encode(nucleotide, padding=0):
-    """入力された文字列に対してOne-hotなnp形式を返す
-    """
-    # パディングの大きさを指定する
-    arr = np.vstack((np.eye(4), np.ones(4)[None, :]*0.25))
-    return arr[one_hot_index("N"*padding + nucleotide.replace("U", "T") + "N"*padding)].T
-
-
 class nt_index(IntEnum):
     A = 0
     T = 1
@@ -58,6 +42,21 @@ class nt_index(IntEnum):
     PAD = 4
     SOS = 5
     EOS = 6
+    U = 1
+
+def one_hot_index(seq):
+    return [int(nt_index[char]) for char in seq]
+
+
+def one_hot_encode(nucleotide, padding=0):
+    """入力された文字列に対してOne-hotなnp形式を返す
+    """
+    # パディングの大きさを指定する
+    arr = np.vstack((np.eye(4), np.ones(4)[None, :]*0.25))
+    return arr[one_hot_index("N"*padding + nucleotide + "N"*padding)].T
+
+
+
 
 
 class SNV(IntEnum):

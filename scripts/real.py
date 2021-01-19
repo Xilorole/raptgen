@@ -15,20 +15,21 @@ from src.data import SequenceGenerator, SingleRound
 
 import os 
 dir_path = os.path.dirname(os.path.realpath(__file__))
+default_path = str(Path(f"{dir_path}/../out/real").resolve())
 
-@click.command()
+@click.command(help='run experiment with real data', context_settings=dict(show_default=True))
 @click.argument("seqpath", type=click.Path(exists = True))
 @click.option("--epochs", help = "the number of training epochs", type = int, default = 1000)
 @click.option("--threshold", help = "the number of epochs with no loss update to stop training", type = int, default = 50)
-@click.option("--cuda-id", help = "the device id of cuda to run", type = int, default = 0)
 @click.option("--use-cuda/--no-cuda", help = "use cuda if available", is_flag=True, default = True)
-@click.option("--save-dir", help = "path to save results", type = click.Path(), default=f"{dir_path}/../out/real")
+@click.option("--cuda-id", help = "the device id of cuda to run", type = int, default = 0)
+@click.option("--save-dir", help = "path to save results", type = click.Path(), default=default_path)
 @click.option("--fwd", help = "forward adapter", type = str, default=None)
 @click.option("--rev", help = "reverse adapter", type = str, default=None)
-@click.option("--min-count", help = "minimum number of count to pass to training", type = int, default=1)
+@click.option("--min-count", help = "minimum duplication count to pass sequence for training", type = int, default=1)
 @click.option("--multi", help = "the number of training for multiple times", type = int, default=1)
 @click.option("--reg-epochs", help = "the number of epochs to conduct state transition regularization", type = int, default=50)
-def main(seqpath, epochs, threshold, cuda_id, use_cuda, save_dir, fwd, rev, min_count, multi,reg_epochs):
+def main(seqpath, epochs, threshold, cuda_id, use_cuda, save_dir, fwd, rev, min_count, multi, reg_epochs):
     logger = logging.getLogger(__name__)
     
     logger.info(f"saving to {save_dir}")

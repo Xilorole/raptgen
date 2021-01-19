@@ -19,17 +19,19 @@ from src.data import SequenceGenerator, SingleRound
 
 import os 
 dir_path = os.path.dirname(os.path.realpath(__file__))
+default_path = str(Path(f"{dir_path}/../out/simlulation/multiple").resolve())
 
-@click.command()
+@click.command(help='run experiment with multiple motif',
+    context_settings=dict(show_default=True))
 @click.option("--n-motif", help = "the number of motifs", type = int, default = 10)
 @click.option("--n-seq", help = "the number of the sequence to generate", type = int, default = 10000)
 @click.option("--seed", help = "seed for seqeunce generation reproduction", type = int, default = 0)
 @click.option("--error-rate", help = "the ratio to modify sequence", type = float, default = 0.1)
 @click.option("--epochs", help = "the number of training epochs", type = int, default = 1000)
 @click.option("--threshold", help = "the number of epochs with no loss update to stop training", type = int, default = 50)
-@click.option("--cuda-id", help = "the device id of cuda to run", type = int, default = 0)
 @click.option("--use-cuda/--no-cuda", help = "use cuda if available", is_flag=True, default = True)
-@click.option("--save-dir", help = "path to save results", type = click.Path(), default=f"{dir_path}/../out/simulation/10motif")
+@click.option("--cuda-id", help = "the device id of cuda to run", type = int, default = 0)
+@click.option("--save-dir", help = "path to save results", type = click.Path(), default=default_path)
 @click.option("--reg-epochs", help = "the number of epochs to conduct state transition regularization", type = int, default=50)
 def main(n_motif, n_seq, seed, error_rate, epochs, threshold, cuda_id, use_cuda, save_dir, reg_epochs):
     logger = logging.getLogger(__name__)

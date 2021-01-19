@@ -13,17 +13,18 @@ from src.data import SingleRound, Result
 
 import os 
 dir_path = os.path.dirname(os.path.realpath(__file__))
+default_path = str(Path(f"{dir_path}/../out/gmm").resolve())
 
-@click.command()
+@click.command(help='select gmm center with trained model',
+    context_settings=dict(show_default=True))
 @click.argument("seqpath", type=click.Path(exists = True))
 @click.argument("modelpath", type=click.Path(exists = True))
-@click.option("--cuda-id", help = "the device id of cuda to run", type = int, default = 0)
 @click.option("--use-cuda/--no-cuda", help = "use cuda if available", is_flag=True, default = True)
-@click.option("--save-dir", help = "path to save results", type = click.Path(), default=f"{dir_path}/../out/gmm")
+@click.option("--cuda-id", help = "the device id of cuda to run", type = int, default = 0)
+@click.option("--save-dir", help = "path to save results", type = click.Path(), default=default_path)
 @click.option("--fwd", help = "forward adapter", type = str, default=None)
 @click.option("--rev", help = "reverse adapter", type = str, default=None)
-@click.option("--min-count", help = "minimum number of count to pass to training", type = int, default=1)
-def main(seqpath, modelpath, cuda_id, use_cuda, save_dir, fwd, rev, min_count):
+def main(seqpath, modelpath, cuda_id, use_cuda, save_dir, fwd, rev):
     logger = logging.getLogger(__name__)
     
     logger.info(f"saving to {save_dir}")

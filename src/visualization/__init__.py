@@ -60,7 +60,6 @@ def plot_violinplot(data, ax = None):
     return ax
 
 
-
 def write_profile_hmm_svg(a, e_m,
                           name="profile_HMM.svg", dx=140,
                           width=70,
@@ -82,7 +81,6 @@ def write_profile_hmm_svg(a, e_m,
 
     nt_color = (e_m @ COLOR).astype('uint8')
 
-    # xの
 
     y_insertion = dx * dxdyratio + width//8
     y_deletion  = dx * dxdyratio * 2
@@ -171,7 +169,6 @@ def write_profile_hmm_svg(a, e_m,
                      e_m[i-1, j], y_match+width+34+20*j),
                     stroke_width=12))
 
-    # or set presentation attributes by helper functions of the Presentation-Mixin
     dwg.save()
     logger.info(f"saved to {name}")
     if savepng:

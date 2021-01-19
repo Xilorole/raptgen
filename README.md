@@ -1,7 +1,11 @@
 # Supplementary code for "RaptGen: A variational autoencoder with profile hidden Markov model for generative aptamer discovery"
 
-## Installation
-Run 
+## Tested environment 
+* Mac OS == 10.15.7
+* python == 3.7.9
+* pytorch == 1.4.0
+
+For other requirements, see [requirements.txt](requirements.txt). Also We verified that the codes are runnable in the provided Docker environment (see [Dockerfile](Dockerfile)). The requirements are installable with;
 
 ```shell
 $ pip install -r requirements.txt
@@ -12,10 +16,43 @@ You also need to install `cairo` library to generate profile hmm image. For mac 
 
 
 ## Quickstart
+All scripts has `--help` command that print the options and the arguments if required. For example,
+
+```text
+% python scripts/multiple.py --help 
+Usage: multiple.py [OPTIONS]
+
+  run experiment with multiple motif
+
+Options:
+  --n-motif INTEGER       the number of motifs  [default: 10]
+  --n-seq INTEGER         the number of the sequence to generate  [default:
+                          10000]
+
+  --seed INTEGER          seed for seqeunce generation reproduction  [default:
+                          0]
+
+  --error-rate FLOAT      the ratio to modify sequence  [default: 0.1]
+  --epochs INTEGER        the number of training epochs  [default: 1000]
+  --threshold INTEGER     the number of epochs with no loss update to stop
+                          training  [default: 50]
+
+  --use-cuda / --no-cuda  use cuda if available  [default: True]
+  --cuda-id INTEGER       the device id of cuda to run  [default: 0]
+  --save-dir PATH         path to save results  [default:
+                          /Users/niwn/raptgen/out/simlulation/multiple]
+
+  --reg-epochs INTEGER    the number of epochs to conduct state transition
+                          regularization  [default: 50]
+
+  --help                  Show this message and exit.  [default: False]
+```
 
 ### Evaluating multi-motifs
+To run the experiment with multiple sequence motifs, run;
+
 ```shell
-$ python3 scripts/10motif.py 
+$ python3 scripts/multiple.py 
 ```
 
 ### Evaluating paired-motifs
@@ -36,6 +73,7 @@ $ python3 scripts/gmm.py \
 ```
 
 ### Run BO
+The evaluated data should be in the 
 ```shell
 $ python3 scripts/bo.py \
     data/real/A_4R.fastq \
@@ -48,16 +86,16 @@ $ python3 scripts/bo.py \
 ```
 .
 ├── data
-│   ├── generated
-│   │   ├── 10motifs
-│   │   └── paired_motif
-│   ├── real_data
-│   └── sample
+│   ├── real
+│   ├── sample
+│   └── simulation
+│       ├── multiple
+│       └── paired
 ├── results
-│   ├── generated
-│   │   ├── 10motifs
-│   │   └── paired_motif
-│   └── real_data
+│   ├── real
+│   └── simulation
+│       ├── multiple
+│       └── paired
 ├── scripts
 └── src
     ├── data
