@@ -29,7 +29,7 @@ dir_path = os.path.dirname(os.path.realpath(__file__))
 @click.option("--threshold", help = "the number of epochs with no loss update to stop training", type = int, default = 50)
 @click.option("--cuda-id", help = "the device id of cuda to run", type = int, default = 0)
 @click.option("--use-cuda/--no-cuda", help = "use cuda if available", is_flag=True, default = True)
-@click.option("--save-dir", help = "path to save results", type = click.Path(), default=f"{dir_path}/../out/10motif")
+@click.option("--save-dir", help = "path to save results", type = click.Path(), default=f"{dir_path}/../out/simulation/10motif")
 @click.option("--reg-epochs", help = "the number of epochs to conduct state transition regularization", type = int, default=50)
 def main(n_motif, n_seq, seed, error_rate, epochs, threshold, cuda_id, use_cuda, save_dir, reg_epochs):
     logger = logging.getLogger(__name__)

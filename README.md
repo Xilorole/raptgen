@@ -25,7 +25,7 @@ $ python3 scripts/paired.py
 
 ### Evaluating real data
 ```shell
-$ python3 scripts/real_data.py data/sample/sample.fasta
+$ python3 scripts/real.py data/sample/sample.fasta
 ```
 
 ### Run GMM
@@ -38,9 +38,9 @@ $ python3 scripts/gmm.py \
 ### Run BO
 ```shell
 $ python3 scripts/bo.py \
-    data/external/A_4R.fastq \
-    results/real_data/A_best.mdl \
-    results/real_data/A_evaled.csv
+    data/real/A_4R.fastq \
+    results/real/A_best.mdl \
+    results/real/A_evaled.csv
 ```
 
 
@@ -48,10 +48,10 @@ $ python3 scripts/bo.py \
 ```
 .
 ├── data
-│   ├── external
 │   ├── generated
 │   │   ├── 10motifs
 │   │   └── paired_motif
+│   ├── real_data
 │   └── sample
 ├── results
 │   ├── generated
