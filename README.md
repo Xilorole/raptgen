@@ -1,4 +1,4 @@
-# Supplementary code
+# Supplementary code for "RaptGen: A variational autoencoder with profile hidden Markov model for generative aptamer discovery"
 
 ## Installation
 Run 
