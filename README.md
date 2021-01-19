@@ -1,13 +1,13 @@
 # Supplementary code
 
 ## Installation
-run
+Run 
 
 ```shell
-pip install -r requirements.txt
+$ pip install -r requirements.txt
 ```
 
-You also need to install `cairo` library to generate profile hmm image. For mac OS X, it can be installed by `brew install cairo && brew install pango`.
+You also need to install `cairo` library to generate profile hmm image. For mac OS X, it can be installed by `brew install cairo && brew install pango`. For Ubuntu `sudo apt-get install -y libcairo2` would work.
 
 
 
