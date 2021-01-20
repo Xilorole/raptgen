@@ -1,21 +1,22 @@
 # Supplementary code for "RaptGen: A variational autoencoder with profile hidden Markov model for generative aptamer discovery"
 
-## Tested environment 
-* Mac OS == 10.15.7
+## Tested environment
+
+* Ubuntu == 18.04.5
 * python == 3.7.9
 * pytorch == 1.4.0
+* cuda == 10.0
 
 For other requirements, see [requirements.txt](requirements.txt). Also We verified that the codes are runnable in the provided Docker environment (see [Dockerfile](Dockerfile)). The requirements are installable with;
 
 ```shell
-$ pip install -r requirements.txt
+pip install -r requirements.txt
 ```
 
 You also need to install `cairo` library to generate profile hmm image. For mac OS X, it can be installed by `brew install cairo && brew install pango`. For Ubuntu `sudo apt-get install -y libcairo2` would work.
 
-
-
 ## Quickstart
+
 All scripts has `--help` command that print the options and the arguments if required. For example,
 
 ```text
@@ -49,41 +50,64 @@ Options:
 ```
 
 ### Evaluating multi-motifs
+
 To run the experiment with multiple sequence motifs, run;
 
 ```shell
-$ python3 scripts/multiple.py 
+python3 scripts/multiple.py 
 ```
 
 ### Evaluating paired-motifs
+
+To run the experiment with paired sequence motifs, run;
+
 ```shell
-$ python3 scripts/paired.py
+python3 scripts/paired.py
 ```
 
 ### Evaluating real data
+
+To run the experiment with sequence files, run;
+
 ```shell
-$ python3 scripts/real.py data/sample/sample.fasta
+python3 scripts/real.py data/sample/sample.fasta
 ```
 
+`.fa`, `.fasta`, and `.fastq` files are automatically processed.
+
 ### Run GMM
+
+To select the center of the GMM populations, run;
+
 ```shell
-$ python3 scripts/gmm.py \
-    data/sample/sample.fasta \
-    data/sample/cnn_phmm_vae.mdl
+python3 scripts/gmm.py \
+  data/sample/sample.fasta \
+  data/sample/cnn_phmm_vae.mdl
 ```
 
 ### Run BO
-The evaluated data should be in the 
+
+To conduct multipoint Bayesian optimization, run;
+
 ```shell
-$ python3 scripts/bo.py \
-    data/real/A_4R.fastq \
-    results/real/A_best.mdl \
-    results/real/A_evaled.csv
+python3 scripts/bo.py \
+  data/real/A_4R.fastq \
+  results/real/A_best.mdl \
+  results/real/A_evaled.csv
 ```
 
+The evaluates seuqneces should hold random region only and each row should be written in  `[string],[value]` format.
+
+```text
+AACGAGAGATGGTAGACCTATCTTTTAGCC,79.0
+GTAGAGATTCTGAGGGTTCTCCTGCTATA,107.1
+TTTTATAAAAAAGTGTTTAAAAAAGATTCA,-3.6
+...
+```
 
 ## Directory structure
-```
+
+```text
 .
 ├── data
 │   ├── real
