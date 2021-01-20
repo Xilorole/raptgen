@@ -42,7 +42,7 @@ def main(seqpath, epochs, threshold, cuda_id, use_cuda, save_dir, fwd, rev, min_
         reverse_adapter=rev)
 
     # training 
-    train_loader, test_loader = experiment.get_dataloader(min_count=min_count)
+    train_loader, test_loader = experiment.get_dataloader(min_count=min_count, use_cuda=use_cuda)
     device = torch.device(f"cuda:{cuda_id}" if (use_cuda and torch.cuda.is_available()) else "cpu")
     
     train_kwargs = {

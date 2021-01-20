@@ -21,8 +21,7 @@ import os
 dir_path = os.path.dirname(os.path.realpath(__file__))
 default_path = str(Path(f"{dir_path}/../out/simlulation/multiple").resolve())
 
-@click.command(help='run experiment with multiple motif',
-    context_settings=dict(show_default=True))
+@click.command(help='run experiment with multiple motif',context_settings=dict(show_default=True))
 @click.option("--n-motif", help = "the number of motifs", type = int, default = 10)
 @click.option("--n-seq", help = "the number of the sequence to generate", type = int, default = 10000)
 @click.option("--seed", help = "seed for seqeunce generation reproduction", type = int, default = 0)
@@ -33,7 +32,8 @@ default_path = str(Path(f"{dir_path}/../out/simlulation/multiple").resolve())
 @click.option("--cuda-id", help = "the device id of cuda to run", type = int, default = 0)
 @click.option("--save-dir", help = "path to save results", type = click.Path(), default=default_path)
 @click.option("--reg-epochs", help = "the number of epochs to conduct state transition regularization", type = int, default=50)
-def main(n_motif, n_seq, seed, error_rate, epochs, threshold, cuda_id, use_cuda, save_dir, reg_epochs):
+@click.option("--multi", help = "the number of training for multiple times", type = int, default=1)
+def main(n_motif, n_seq, seed, error_rate, epochs, threshold, cuda_id, use_cuda, save_dir, reg_epochs, multi):
     logger = logging.getLogger(__name__)
     logger.info(f"saving to {save_dir}")
     
@@ -99,29 +99,36 @@ def main(n_motif, n_seq, seed, error_rate, epochs, threshold, cuda_id, use_cuda,
     cnnlstm_ar_vae   = CNNLSTM_AR_VAE(embed_size=2)
 
     results = dict()
-    for i, model in enumerate([
-        cnn_phmm_vae     ,
-        cnn_ar_vae       ,
-        cnn_mul_vae      ,
-        
-        lstm_phmm_vae    ,
-        lstm_ar_vae      ,
-        lstm_mul_vae     ,
-        
-        cnnlstm_phmm_vae ,
-        cnnlstm_ar_vae   ,
-        cnnlstm_mul_vae  
-    ]):
-        model_str = str(type(model)).split("\'")[-2].split(".")[-1].lower() + ".mdl"
-        print (f"training {model_str}")
-        optimizer = optim.Adam(model.parameters())
-        model = model.to(device)
+    for i in range(multi):
+        for model in [
+            cnn_phmm_vae     ,
+            cnn_ar_vae       ,
+            cnn_mul_vae      ,
+            
+            lstm_phmm_vae    ,
+            lstm_ar_vae      ,
+            lstm_mul_vae     ,
+            
+            cnnlstm_phmm_vae ,
+            cnnlstm_ar_vae   ,
+            cnnlstm_mul_vae  
+        ]:
+            model_str = str(type(model)).split("\'")[-2].split(".")[-1].lower()
+            if multi > 1:
+                model_str += f"_{i}"
+            model_str += ".mdl"
+            print (f"training {model_str}")
+            
+            optimizer = optim.Adam(model.parameters())
+            model = model.to(device)
 
-        train_kwargs.update({
-            "model"        : model,
-            "model_str"    : model_str,
-            "optimizer"    : optimizer})
-        results[model_str] = models.train(**train_kwargs)
+            train_kwargs.update({
+                "model"        : model,
+                "model_str"    : model_str,
+                "optimizer"    : optimizer})
+
+            results[model_str] = models.train(**train_kwargs)
+            torch.cuda.empty_cache()
 
 if __name__ == "__main__":
     Path("./.log").mkdir(parents=True, exist_ok=True)

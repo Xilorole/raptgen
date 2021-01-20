@@ -335,12 +335,12 @@ class SingleRound:
     def __str__(self):
         return f"experiment of {len(self.raw_reads)} raw reads"
 
-    def get_dataloader(self, min_count=1, test_size=0.1, batch_size=512, shuffle=True):
+    def get_dataloader(self, min_count=1, test_size=0.1, batch_size=512, shuffle=True, use_cuda = True):
         from sklearn.model_selection import train_test_split
         from torch.utils.data import DataLoader
         
         self.min_count = min_count
-        kwargs = {'num_workers': 1, 'pin_memory': True} if torch.cuda.is_available() else {}
+        kwargs = {'num_workers': 1, 'pin_memory': True} if (use_cuda and torch.cuda.is_available()) else {}
         # load RAPT1-4R and filter reads to count>1, then make it to one hot encoded tensor
         c = self.get_filter_passed_sequences(random_only=True)
         sequences = list(
