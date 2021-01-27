@@ -30,7 +30,8 @@ default_path = str(Path(f"{dir_path}/../out/simlulation/paired").resolve())
 @click.option("--save-dir", help = "path to save results", type = click.Path(), default=default_path)
 @click.option("--reg-epochs", help = "the number of epochs to conduct state transition regularization", type = int, default=50)
 @click.option("--multi", help = "the number of training for multiple times", type = int, default=1)
-def main(n_seq, seed, epochs, threshold, cuda_id, use_cuda, save_dir,reg_epochs, multi):
+@click.option("--only-cnn/--all-models", help = "train all encoder types or not", type = bool, default=False)
+def main(n_seq, seed, epochs, threshold, cuda_id, use_cuda, save_dir,reg_epochs, multi, only_cnn):
     logger = logging.getLogger(__name__)
     
     logger.info(f"saving to {save_dir}")
@@ -85,33 +86,23 @@ def main(n_seq, seed, epochs, threshold, cuda_id, use_cuda, save_dir,reg_epochs,
 
     # evaluate models
     target_len = experiment.random_region_length
-    cnn_mul_vae      = CNN_Mul_VAE    (target_len=target_len, embed_size=2)
-    lstm_mul_vae     = LSTM_Mul_VAE   (target_len=target_len, embed_size=2)
-    cnnlstm_mul_vae  = CNNLSTM_Mul_VAE(target_len=target_len, embed_size=2)
-    
-    cnn_phmm_vae     = CNN_PHMM_VAE    (motif_len=target_len, embed_size=2)
-    lstm_phmm_vae    = LSTM_PHMM_VAE   (motif_len=target_len, embed_size=2)
-    cnnlstm_phmm_vae = CNNLSTM_PHMM_VAE(motif_len=target_len, embed_size=2)
-
-    cnn_ar_vae       = CNN_AR_VAE    (embed_size=2)
-    lstm_ar_vae      = LSTM_AR_VAE   (embed_size=2)
-    cnnlstm_ar_vae   = CNNLSTM_AR_VAE(embed_size=2)
 
     results = dict()
     for i in range(multi):
-        for model in [
-            cnn_phmm_vae     ,
-            cnn_ar_vae       ,
-            cnn_mul_vae      ,
-            
-            lstm_phmm_vae    ,
-            lstm_ar_vae      ,
-            lstm_mul_vae     ,
-            
-            cnnlstm_phmm_vae ,
-            cnnlstm_ar_vae   ,
-            cnnlstm_mul_vae  
-        ]:
+        eval_models = [
+            CNN_Mul_VAE    (target_len=target_len, embed_size=2),
+            CNN_AR_VAE    (embed_size=2),
+            CNN_PHMM_VAE    (motif_len=target_len, embed_size=2)
+        ]
+        if not only_cnn:
+            eval_models.extend([
+            LSTM_Mul_VAE   (target_len=target_len, embed_size=2),
+            LSTM_AR_VAE   (embed_size=2),
+            LSTM_PHMM_VAE   (motif_len=target_len, embed_size=2),
+            CNNLSTM_Mul_VAE(target_len=target_len, embed_size=2),
+            CNNLSTM_AR_VAE(embed_size=2),
+            CNNLSTM_PHMM_VAE(motif_len=target_len, embed_size=2)])
+        for model in eval_models:
             model_str = str(type(model)).split("\'")[-2].split(".")[-1].lower()
             if multi > 1:
                 model_str += f"_{i}"
