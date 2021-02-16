@@ -10,6 +10,7 @@ from pathlib import Path
 import logging
 logger = logging.getLogger(__name__)
 
+
 class View(nn.Module):
     def __init__(self, shape):
         super(View, self).__init__()
@@ -18,8 +19,9 @@ class View(nn.Module):
     def forward(self, x):
         return x.view(*self.shape)
 
+
 def train(epochs, model, train_loader, test_loader, optimizer, loss_fn=None, device="cuda", n_print=100, model_str="model.mdl", save_dir=Path("./"), threshold=20, beta=1, beta_schedule=False, force_matching=False, force_epochs=20, logs=True, position=0):
-    csv_filename = model_str.replace(".mdl",".csv")
+    csv_filename = model_str.replace(".mdl", ".csv")
     if loss_fn == profile_hmm_loss_fn and force_matching:
         logger.info(f"force till {force_epochs}")
     patient = 0
@@ -82,7 +84,8 @@ def train(epochs, model, train_loader, test_loader, optimizer, loss_fn=None, dev
                 "[" + "⠸⠴⠦⠇⠋⠙"[epoch % 6] + "]")
             len_model_str = len(model_str)
             if len_model_str > 10:
-                model_str_print = f"..........{model_str}.........."[(epoch+9)%(len_model_str+10):(epoch+9)%(len_model_str+10) + 10]
+                model_str_print = f"..........{model_str}.........."[
+                    (epoch+9) % (len_model_str+10):(epoch+9) % (len_model_str+10) + 10]
             else:
                 model_str_print = model_str
             description = f'{patience_str:>4}{epoch:4d} itr {train_loss:6.2f} <-> {test_loss:6.2f} ({test_ce:6.2f}+{test_kld:6.2f}) of {model_str_print}'
@@ -97,6 +100,7 @@ def train(epochs, model, train_loader, test_loader, optimizer, loss_fn=None, dev
                 pbar.set_description(description)
                 pbar.update(1)
     return losses
+
 
 def kld_loss(mu, logvar):
     KLD = - 0.5 * torch.sum(1 + logvar - mu.pow(2) -
@@ -113,6 +117,7 @@ class State(IntEnum):
     M = 0
     I = 1
     D = 2
+
 
 class Transition(IntEnum):
     M2M = 0
@@ -182,11 +187,12 @@ def profile_hmm_loss(recon_param, input, force_matching=False, match_cost=5):
         return - force_loss - torch.logsumexp(F[:, :, motif_len, random_len], dim=1).mean()
     return - torch.logsumexp(F[:, :, motif_len, random_len], dim=1).mean()
 
+
 def end_padded_multi_categorical_loss_fn(input, recon_param, mu, logvar, debug=False, test=False, beta=1):
     from src.data import nt_index
     loss = multi_categorical_loss_fn(
         F.pad(input, (0, 1), "constant", nt_index.EOS),
-            recon_param, mu, logvar, debug, test, beta)
+        recon_param, mu, logvar, debug, test, beta)
     # logger.info(loss.shape)
     return loss
 
@@ -401,9 +407,10 @@ class EncoderCNNLSTM (nn.Module):
     def forward(self, seqences):
         from src.data import nt_index
         # PAD, SOS, SEQ, EOS, PAD
-        x = F.pad(seqences, (1, 0), "constant",int(nt_index.SOS))
+        x = F.pad(seqences, (1, 0), "constant", int(nt_index.SOS))
         x = F.pad(x, (0, 1), "constant", int(nt_index.EOS))
-        x = F.pad(x, (self.window_size-1, self.window_size-1), "constant", int(nt_index.PAD))
+        x = F.pad(x, (self.window_size-1, self.window_size-1),
+                  "constant", int(nt_index.PAD))
 
         # change X from (N, L) to (N, L, C)
         x = F.leaky_relu(self.embed(x))
@@ -416,6 +423,7 @@ class EncoderCNNLSTM (nn.Module):
         o, (h, c) = self.lstm(x)
 
         return torch.cat((h[0], h[1]), dim=1)
+
 
 class DecoderPHMM(nn.Module):
     # tile hidden and input to make x
@@ -544,15 +552,15 @@ class DecoderCNN(nn.Module):
             nn.BatchNorm1d(hidden_size),
             nn.LeakyReLU(negative_slope=0.01, inplace=True),
             nn.ConvTranspose1d(**transpose_kwargs),
-            
+
             nn.BatchNorm1d(**batchnorm_kwargs),
             nn.LeakyReLU(negative_slope=0.01, inplace=True),
             nn.ConvTranspose1d(**transpose_kwargs),
-            
+
             nn.BatchNorm1d(**batchnorm_kwargs),
             nn.LeakyReLU(negative_slope=0.01, inplace=True),
             nn.ConvTranspose1d(**conv1x1_kwargs),
-            
+
             nn.LeakyReLU(negative_slope=0.01, inplace=True))
 
     def forward(self, in_x):
@@ -683,7 +691,7 @@ class CNN_PHMM_VAE(VAE):
     def __init__(self, motif_len=12, embed_size=10, hidden_size=32, kernel_size=7):
         encoder = EncoderCNN(hidden_size, kernel_size)
         decoder = DecoderPHMM(motif_len, embed_size)
-        
+
         super(CNN_PHMM_VAE, self).__init__(
             encoder, decoder, embed_size, hidden_size)
         self.loss_fn = profile_hmm_loss_fn
