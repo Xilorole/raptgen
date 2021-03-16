@@ -1,6 +1,9 @@
 # local package
 -e .
 
+# package location
+--find-links https://download.pytorch.org/whl/torch_stable.html
+
 # external requirements
 click==7.1.2
 scikit-learn==0.23.2
@@ -15,6 +18,3 @@ torchvision===0.5.0+cu100
 svgwrite==1.4
 scipy==1.4.0
 cairosvg==2.5.1
-
-# package location
---find-links https://download.pytorch.org/whl/torch_stable.html
