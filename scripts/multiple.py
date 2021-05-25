@@ -1,11 +1,11 @@
 # run 10 motif split simulation script
 import os
 import click
-from src.data import SequenceGenerator, SingleRound
-from src.models import CNN_PHMM_VAE, LSTM_PHMM_VAE, CNNLSTM_PHMM_VAE
-from src.models import CNN_AR_VAE,   LSTM_AR_VAE,   CNNLSTM_AR_VAE
-from src.models import CNN_Mul_VAE,  LSTM_Mul_VAE,  CNNLSTM_Mul_VAE
-from src import models
+from raptgen.data import SequenceGenerator, SingleRound
+from raptgen.models import CNN_PHMM_VAE, LSTM_PHMM_VAE, CNNLSTM_PHMM_VAE
+from raptgen.models import CNN_AR_VAE,   LSTM_AR_VAE,   CNNLSTM_AR_VAE
+from raptgen.models import CNN_Mul_VAE,  LSTM_Mul_VAE,  CNNLSTM_Mul_VAE
+from raptgen import models
 from torch import optim
 import torch
 from pathlib import Path

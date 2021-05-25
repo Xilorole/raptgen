@@ -277,6 +277,10 @@ class SingleRound:
                     f"estimated forward adapter len is {i-1} : {est_adapter}")
                 break
             max_count = sorted(d.items(), key=lambda x: -x[1])[0][1]
+            if max_count < sum(self.read_counter.values()) * 0.5:
+                logger.info(
+                    f"no match found.")
+                break
             est_adapter = top_seq
         fwd_len = i - 1
         fwd_adapter = est_adapter
@@ -296,6 +300,10 @@ class SingleRound:
                     f"estimated reverse adapter len is {i-1} : {est_adapter}")
                 break
             max_count = sorted(d.items(), key=lambda x: -x[1])[0][1]
+            if max_count < sum(self.read_counter.values()) * 0.5:
+                logger.info(
+                    f"no match found.")
+                break
             est_adapter = top_seq
         rev_len = i - 1
         rev_adapter = est_adapter
@@ -626,7 +634,7 @@ class ProfileHMMSampler():
 
 class Result():
     """実験結果の保存のためのクラス"""
-    from src.visualization import provide_ax
+    from raptgen.visualization import provide_ax
 
     def __init__(self,
                  model,
@@ -962,7 +970,7 @@ class Result():
         return [most_probable for seq_pattern, most_probable, min_value in scores]
 
     def plot_training_result(self, nwarmup=100, save=True, fig=None, axes=None):
-        from src.visualization import get_ax
+        from raptgen.visualization import get_ax
         if axes is not None and fig is not None:
             ax, ay = axes
         fig, (ax, ay) = get_ax(row_col=(2, 1), return_fig=True)

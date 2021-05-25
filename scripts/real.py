@@ -8,10 +8,10 @@ from pathlib import Path
 import torch
 from torch import optim
 
-from src import models
-from src.models import CNN_PHMM_VAE
+from raptgen import models
+from raptgen.models import CNN_PHMM_VAE
 
-from src.data import SequenceGenerator, SingleRound
+from raptgen.data import SequenceGenerator, SingleRound
 
 import os
 dir_path = os.path.dirname(os.path.realpath(__file__))

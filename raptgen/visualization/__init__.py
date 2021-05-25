@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 
 
 def provide_ax(func):
-    from src.visualization import get_ax
+    from raptgen.visualization import get_ax
 
     def wrapper_provide_ax(*args, **kwargs):
         no_ax_in_args = all(not isinstance(
@@ -72,7 +72,7 @@ def write_profile_hmm_svg(a, e_m,
                           dxdyratio=0.6, savepng=True, is_log_proba=True, stroke_w=20):
     from cairosvg import svg2png
     import svgwrite
-    from src.data import State, Transition
+    from raptgen.data import State, Transition
     if is_log_proba:
         a = np.exp(a)
         e_m = np.exp(e_m)
@@ -284,8 +284,8 @@ class SeqLogoDrawer():
 @provide_ax
 def draw_most_probable(a, e_m, ax, fig=None, header="phmm", save=True, force=False, drawer=None, draw_only_insertion=True):
 
-    from src.data import State, Transition
-    from src.data import ProfileHMMSampler
+    from raptgen.data import State, Transition
+    from raptgen.data import ProfileHMMSampler
     if drawer is None:
         drawer = SeqLogoDrawer()
 
