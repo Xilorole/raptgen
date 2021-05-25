@@ -5,6 +5,10 @@ import numpy as np
 import matplotlib
 from matplotlib import pyplot as plt
 
+from PIL import Image
+from PIL import ImageDraw
+from PIL import ImageFont
+
 import logging
 logger = logging.getLogger(__name__)
 
@@ -185,9 +189,7 @@ class SeqLogoDrawer():
     """based on https://weblogo.berkeley.edu/
     """
 
-    from PIL import Image
-    from PIL import ImageDraw
-    from PIL import ImageFont
+
 
     def __init__(self, isRNA=True):
         red = "#d50000"
