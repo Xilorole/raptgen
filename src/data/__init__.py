@@ -179,13 +179,18 @@ def get_reads_with_id_prefix(path, prefix_on, prefix_off):
         for line in f.readlines():
             if line[0] == prefix_off:
                 switch = False
-                reads.append(read)
-                read = ""
+                if read != "":
+                    reads.append(read)
+                    read = ""
             if switch:
                 read = read + line.strip()
             if line[0] == prefix_on:
                 switch = True
                 read = ""
+        
+        # terminalization
+        if read != "":
+            reads.append(read)
     return reads
 
 
