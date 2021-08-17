@@ -60,7 +60,7 @@ def main(seqpath, epochs, threshold, cuda_id, use_cuda, save_dir, fwd, rev, min_
     # evaluate model
     target_len = experiment.random_region_length
     for i in range(multi):
-        model     = CNN_PHMM_VAE(motif_len=target_len, embed_size=2)
+        model = CNN_PHMM_VAE(motif_len=target_len, embed_size=2)
         model_str = str(type(model)).split("\'")[-2].split(".")[-1].lower()
         if multi > 1:
             model_str += f"_{i}"

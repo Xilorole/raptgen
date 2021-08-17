@@ -107,7 +107,7 @@ def main(n_seq, seed, epochs, threshold, cuda_id, use_cuda, save_dir,reg_epochs,
             if multi > 1:
                 model_str += f"_{i}"
             model_str += ".mdl"
-            print (f"training {model_str}")
+            print(f"training {model_str}")
             optimizer = optim.Adam(model.parameters())
             model = model.to(device)
 
