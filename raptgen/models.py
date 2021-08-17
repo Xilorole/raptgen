@@ -288,7 +288,7 @@ def torch_multi_polytope_dp_log(transition_proba, emission_proba, output):
 
 
 def end_padded_multi_categorical_loss_fn(input, recon_param, mu, logvar, debug=False, test=False, beta=1):
-    from src.data import nt_index
+    from raptgen.data import nt_index
     loss = multi_categorical_loss_fn(
         F.pad(input, (0, 1), "constant", nt_index.EOS),
         recon_param, mu, logvar, debug, test, beta)
@@ -466,7 +466,7 @@ class EncoderLSTM (nn.Module):
     # 0~3 is already used by embedding ATGC
     def __init__(self, embedding_dim=32, window_size=7):
         super(EncoderLSTM, self).__init__()
-        from src.data import nt_index
+        from raptgen.data import nt_index
         self.embedding_dim = embedding_dim
         self.window_size = window_size
 
@@ -480,7 +480,7 @@ class EncoderLSTM (nn.Module):
                             bidirectional=True)
 
     def forward(self, seqences):
-        from src.data import nt_index
+        from raptgen.data import nt_index
 
         # PAD, SOS, SEQ, EOS, PAD
         x = F.pad(seqences, (1, 0), "constant", int(nt_index.SOS))
@@ -497,7 +497,7 @@ class EncoderCNNLSTM (nn.Module):
     # 0~3 is already used by embedding ATGC
     def __init__(self, embedding_dim=32, window_size=7):
         super(EncoderCNNLSTM, self).__init__()
-        from src.data import nt_index
+        from raptgen.data import nt_index
         self.embedding_dim = embedding_dim
         self.window_size = window_size
 
@@ -515,7 +515,7 @@ class EncoderCNNLSTM (nn.Module):
             Bottleneck(embedding_dim, window_size))
 
     def forward(self, seqences):
-        from src.data import nt_index
+        from raptgen.data import nt_index
         # PAD, SOS, SEQ, EOS, PAD
         x = F.pad(seqences, (1, 0), "constant", int(nt_index.SOS))
         x = F.pad(x, (0, 1), "constant", int(nt_index.EOS))
@@ -751,7 +751,7 @@ class DecoderRNN (nn.Module):
             nn.LeakyReLU(negative_slope=0.01),
             nn.Linear(hidden_size, 7),
             nn.LeakyReLU(negative_slope=0.01))
-        from src.data import nt_index
+        from raptgen.data import nt_index
         self.nt_index = nt_index
 
     def forward(self, in_x: torch.Tensor, seqences: torch.Tensor) -> torch.Tensor:

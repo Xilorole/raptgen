@@ -2,8 +2,6 @@ FROM nvidia/cuda:10.2-devel-ubuntu18.04
 
 WORKDIR /root
 
-
-
 RUN apt-get update && apt-get upgrade -y
 RUN apt-get install -y libcairo2 build-essential libbz2-dev libdb-dev  \
     libreadline-dev libffi-dev libgdbm-dev liblzma-dev   libncursesw5-dev \
