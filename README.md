@@ -2,10 +2,10 @@
 
 ## Tested environment
 
-* Ubuntu == 18.04.5
-* python == 3.7.9
-* pytorch == 1.4.0
-* cuda == 10.0
+* Ubuntu == 18.04
+* python == 3.7
+* pytorch == 1.5.0
+* cuda == 10.2
 
 For other requirements, see [Pipfile](Pipfile). Also We verified that the codes are runnable in the provided Docker environment (see [Dockerfile](Dockerfile)). Built image is available at [`natuski/raptgen-gpu`](https://hub.docker.com/repository/docker/natuski/raptgen-gpu) on docker hub. The requirements are installable using [pipenv](https://pipenv.pypa.io/en/latest/) with;
 
