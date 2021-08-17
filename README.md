@@ -7,10 +7,10 @@
 * pytorch == 1.4.0
 * cuda == 10.0
 
-For other requirements, see [requirements.txt](requirements.txt). Also We verified that the codes are runnable in the provided Docker environment (see [Dockerfile](Dockerfile)). Built image is available at [`natuski/raptgen`](https://hub.docker.com/repository/docker/natuski/raptgen) on docker hub. The requirements are installable with;
+For other requirements, see [Pipfile](Pipfile). Also We verified that the codes are runnable in the provided Docker environment (see [Dockerfile](Dockerfile)). Built image is available at [`natuski/raptgen-gpu`](https://hub.docker.com/repository/docker/natuski/raptgen-gpu) on docker hub. The requirements are installable using [pipenv](https://pipenv.pypa.io/en/latest/) with;
 
 ```shell
-pip install -r requirements.txt
+pipenv install
 ```
 
 You also need to install `cairo` library to generate profile hmm image. For mac OS X, it can be installed by `brew install cairo && brew install pango`. For Ubuntu `sudo apt-get install -y libcairo2` would work.
