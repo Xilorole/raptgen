@@ -57,7 +57,7 @@ To run the experiment with multiple sequence motifs, run;
 python3 scripts/multiple.py
 ```
 
-This outputs models ({{model}}.mdl) and its training result ({{model}}.csv) into specified folder (default is out/simlulation/multiple).
+This outputs models ({{model}}.mdl) and its training result ({{model}}.csv) into specified folder (default is out/simlulation/multiple). A single run takes approximately 20 hours on Tesla V100 GPU.
 
 ### Evaluating paired-motifs
 
@@ -67,7 +67,7 @@ To run the experiment with paired sequence motifs, run;
 python3 scripts/paired.py
 ```
 
-The default saving folder is out/simlulation/paired.
+The default saving folder is out/simlulation/paired. A single run takes approximately 10 hours on Tesla V100 GPU.
 
 ### Evaluating real data
 
@@ -77,7 +77,7 @@ To run the experiment with sequence files, run;
 python3 scripts/real.py data/sample/sample.fasta
 ```
 
-`.fa`, `.fasta`, and `.fastq` files are automatically processed. The default saving folder is out/simlulation/real.
+`.fa`, `.fasta`, and `.fastq` files are automatically processed. The default saving folder is out/simlulation/real. The runtime depends on the sequence length and number of unique sequences.
 
 ### Run GMM
 
