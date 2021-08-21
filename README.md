@@ -111,6 +111,15 @@ TTTTATAAAAAAGTGTTTAAAAAAGATTCA,-3.6
 ...
 ```
 
+The result contains the sequence to be evaluated, the position of the motif embedding, and the embedding of the most probable sequence (`re_`).
+
+```
+% cat out/bo/bo_seq.csv
+bo_index,seq,x,y,re_x,re_y
+0,GTAGAGATTCTGAGGGTTCTCCTGTTGACC,1.53,-0.13,1.60,-0.50
+1,GTAGAGATTCTGAGGGTTCTCCTGTTGCCA,1.56,-0.58,1.62,-0.47
+```
+
 ## Directory structure
 
 ```text
