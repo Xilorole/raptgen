@@ -13,7 +13,7 @@ For other requirements, see [Pipfile](Pipfile). Also We verified that the codes 
 pipenv install
 ```
 
-You also need to install `cairo` library to generate profile hmm image. For mac OS X, it can be installed by `brew install cairo && brew install pango`. For Ubuntu `sudo apt-get install -y libcairo2` would work.
+The install time was about 10 minutes on MacbookPro 2020 Core i5 16G. You may also need to install `cairo` library to generate profile hmm image. For mac OS X, it can be installed by `brew install cairo && brew install pango`. For Ubuntu `sudo apt-get install -y libcairo2` would work.
 
 ## Quickstart
 
@@ -54,8 +54,10 @@ Options:
 To run the experiment with multiple sequence motifs, run;
 
 ```shell
-python3 scripts/multiple.py 
+python3 scripts/multiple.py
 ```
+
+This outputs models ({{model}}.mdl) and its training result ({{model}}.csv) into specified folder (default is out/simlulation/multiple).
 
 ### Evaluating paired-motifs
 
@@ -65,6 +67,8 @@ To run the experiment with paired sequence motifs, run;
 python3 scripts/paired.py
 ```
 
+The default saving folder is out/simlulation/paired.
+
 ### Evaluating real data
 
 To run the experiment with sequence files, run;
@@ -73,7 +77,7 @@ To run the experiment with sequence files, run;
 python3 scripts/real.py data/sample/sample.fasta
 ```
 
-`.fa`, `.fasta`, and `.fastq` files are automatically processed.
+`.fa`, `.fasta`, and `.fastq` files are automatically processed. The default saving folder is out/simlulation/real.
 
 ### Run GMM
 
@@ -84,6 +88,8 @@ python3 scripts/gmm.py \
   data/sample/sample.fasta \
   data/sample/cnn_phmm_vae.mdl
 ```
+
+this will output top 10 sequence to specified directory (default out/gmm/gmm_seq.csv).
 
 ### Run BO
 
