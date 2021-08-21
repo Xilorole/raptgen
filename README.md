@@ -41,7 +41,7 @@ Options:
   --use-cuda / --no-cuda  use cuda if available  [default: True]
   --cuda-id INTEGER       the device id of cuda to run  [default: 0]
   --save-dir PATH         path to save results  [default:
-                          /Users/niwn/raptgen/out/simlulation/multiple]
+                          out/simlulation/multiple]
 
   --reg-epochs INTEGER    the number of epochs to conduct state transition
                           regularization  [default: 50]
