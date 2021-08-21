@@ -9,13 +9,13 @@ import torch
 from torch import optim
 
 from raptgen import models
-from raptgen.models import CNN_PHMM_VAE
+from raptgen.models import CNN_PHMM_VAE_FAST
 
 from raptgen.data import SequenceGenerator, SingleRound
 
 import os 
 dir_path = os.path.dirname(os.path.realpath(__file__))
-default_path = str(Path(f"{dir_path}/../out/real").resolve())
+default_path = str(Path(f"{dir_path}/../out/real_fast").resolve())
 
 @click.command(help='run experiment with real data', context_settings=dict(show_default=True))
 @click.argument("seqpath", type=click.Path(exists = True))
@@ -60,7 +60,7 @@ def main(seqpath, epochs, threshold, cuda_id, use_cuda, save_dir, fwd, rev, min_
     # evaluate model
     target_len = experiment.random_region_length
     for i in range(multi):
-        model = CNN_PHMM_VAE(motif_len=target_len, embed_size=2)
+        model = CNN_PHMM_VAE_FAST(motif_len=target_len, embed_size=2)
         model_str = str(type(model)).split("\'")[-2].split(".")[-1].lower()
         if multi > 1:
             model_str += f"_{i}"
