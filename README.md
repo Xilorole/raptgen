@@ -7,11 +7,7 @@
 * pytorch == 1.5.0
 * cuda == 10.2
 
-<<<<<<< HEAD
-For other requirements, see [requirements.txt](requirements.txt). Also We verified that the codes are runnable in the provided Docker environment (see [Dockerfile](Dockerfile)). Built image is available at [`natuski/raptgen`](https://hub.docker.com/repository/docker/natuski/raptgen) on docker hub. The requirements are installable with;
-=======
 For other requirements, see [Pipfile](Pipfile). Also We verified that the codes are runnable in the provided Docker environment (see [Dockerfile](Dockerfile)). Built image is available at [`natuski/raptgen-gpu`](https://hub.docker.com/repository/docker/natuski/raptgen-gpu) on docker hub. The requirements are installable using [pipenv](https://pipenv.pypa.io/en/latest/) with;
->>>>>>> 4ca6aa872a4bee83c54831369643165d3b147ac5
 
 ```shell
 pipenv install
