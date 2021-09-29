@@ -33,7 +33,7 @@ def main(seqpath, epochs, threshold, cuda_id, use_cuda, save_dir, fwd, rev, min_
     logger = logging.getLogger(__name__)
     
     logger.info(f"saving to {save_dir}")
-    save_dir = Path(save_dir)
+    save_dir = Path(save_dir).expanduser()
     save_dir.mkdir(exist_ok = True, parents=True)
 
     experiment = SingleRound(
