@@ -1,0 +1,69 @@
+Bootstrap: docker
+From: nvidia/cuda:10.2-devel-ubuntu18.04
+
+%environment
+    # all env variables defined in "post" section is lost at runtime. re-defined here.
+    export LC_ALL="C.UTF-8"
+    export LANG="C.UTF-8"
+        # needed to execute pipenv and some module in venv
+    export PYENV_ROOT="/.pyenv"
+    export PATH="/.pyenv/bin:${PATH}"
+        # needed to use pyenv
+    export PIPENV_VENV_IN_PROJECT=true
+        # modules specified by pipenv is stored under raptgen.git (this makes it easy to delete modules)
+
+%post
+    # env variables used in “post”
+    export PYENV_ROOT="/.pyenv"
+    export PATH="/.pyenv/bin:${PATH}"
+        # specify which pyenv executable to use
+    export PIP_NO_CACHE_DIR=false
+        # needed to deal with the problem of MemoryError when loading torch module
+
+    # dependancy
+    apt-get update && apt-get upgrade -y
+    apt-get install -y libcairo2 build-essential libbz2-dev libdb-dev  \
+        libreadline-dev libffi-dev libgdbm-dev liblzma-dev   libncursesw5-dev \
+        libsqlite3-dev libssl-dev zlib1g-dev uuid-dev python3 python3-dev curl git wget
+    
+    # get pyenv in container filesystem
+    git clone "https://github.com/yyuu/pyenv.git" "/.pyenv" # stored in /.pyenv
+
+    # change the version of python3 from “system” to 3.7.11
+    eval "$(pyenv init --path)"
+    eval "$(pyenv init -)"
+    eval "$(pyenv virtualenv-init -)"
+    pyenv install 3.7.11
+    pyenv global 3.7.11
+        # default pip is changed to pip 20.1.1 (binary stored under /.pyenv)
+
+    # get pipenv
+    pip install pipenv # stored under /.pyenv
+
+%runscript
+    # some env variables are added when command "run" is specified
+    export TEMP_DIR="${HOME}$(mktemp)"
+        # temporal directory to git clone raptgen
+    export PYTHONPATH="${TEMP_DIR}/raptgen/raptgen"
+        # used to import other files in the module.
+
+    # need to activate pyenv. After this, python 3.7.11, pip 20.1.1 and pipenv become available
+    eval "$(pyenv init --path)"
+
+    # raptgen directory have to be writable. borrow and use storage from the host
+    trap "rm -rf ${TEMP_DIR}" EXIT
+    mkdir -p "${TEMP_DIR}"
+    cd "${TEMP_DIR}"
+
+    # get and install raptgen. this may take few minutes.
+    git clone "https://github.com/hmdlab/raptgen.git"
+    cd "raptgen"
+    pipenv install
+
+    echo "[$(date)] Container for RaptGen was created"
+    "$@"
+
+%help
+    usage: "singularity run SIF_FILENAME pipenv run COMMAND"
+    this container has python3, pip and pipenv executables independent from the host. however, need to clone raptgen.git and install dependent python modules at runtime. this could take few minutes.
+    raptgen will be installed to an temporal directory, which is deleted after COMMAND finished.
