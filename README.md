@@ -49,6 +49,34 @@ Options:
   --help                  Show this message and exit.  [default: False]
 ```
 
+Visualized logs looks like
+```
+% python3 scripts/real.py data/sample/sample.fasta 
+saving to /Users/niwn/raptgen/out/real
+reading fasta format sequence
+adapter info not provided. estimating value
+estimated forward adapter len is 5 : AAAAA
+estimated reverse adapter len is 5 : GGGGG
+filtering with : AAAAA(5N)-20N-GGGGG(5N)
+experiment name : 20211128_210830338899
+# of sequences -> 100
+
+[1] 139 itr  26.23 <->  26.99 ( 25.85+  1.14) of _vae.mdl..:  14%|█       | 139/1000 [02:38<16:16,  1.13s/it]
+```
+
+The last line indicates the training status. The loss, iteration number, estimated time for training and etc. are shown.
+
+```
+[1] 139 itr  26.23 <->  26.99 ( 25.85+  1.14) of _vae.mdl..:  14%|█       | 139/1000 [02:38<16:16,  1.13s/it]
+^^^          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^    ^^^^^^^^^^
+ |           train & valid (recon+norm.) loss  model filename
+ |
+number of epochs with no validation loss update.
+```
+
+
+## To evaluate multi-/pair- motif for testing
+
 ### Evaluating multi-motifs
 
 To run the experiment with multiple sequence motifs, run;
@@ -69,6 +97,10 @@ python3 scripts/paired.py
 
 The default saving folder is out/simlulation/paired. A single run takes approximately 10 hours on Tesla V100 GPU.
 
+## To evaluate real data
+
+In order to run raptgen with your own sequence files, you have to run `real.py` which trains the model which encode sequence into representation vector.
+
 ### Evaluating real data
 
 To run the experiment with sequence files, run;
@@ -77,7 +109,16 @@ To run the experiment with sequence files, run;
 python3 scripts/real.py data/sample/sample.fasta
 ```
 
-`.fa`, `.fasta`, and `.fastq` files are automatically processed. The default saving folder is out/simlulation/real. The runtime depends on the sequence length and number of unique sequences.
+`.fa`, `.fasta`, and `.fastq` files are automatically processed. The default saving folder is `out/simlulation/real`. The runtime depends on the sequence length and number of unique sequences. The output of this procedure are the followings;
+
+* trained model : `[MODEL_NAME].mdl`, such as `cnn_phmm_vae.mdl`
+* model loss transition: `[MODEL_NAME].csv`, such as `cnn_phmm_var.csv`
+
+Model which calculates probability using [polytope model](https://en.wikipedia.org/wiki/Polytope_model) is experimentally implemented. It is about 10x faster when random region length is around 100. To use polytope model, use `real_fast.py`.
+
+### Utilizing trained encoder and decoder
+
+To embded and reconstruct sequence, use `encode.py` and `decode.py`. `encode.py` gives its representation vector.
 
 ### Run GMM
 
