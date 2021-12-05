@@ -1,0 +1,68 @@
+import logging
+
+import click 
+from pathlib import Path
+
+import torch
+
+from raptgen import models
+from raptgen.models import CNN_PHMM_VAE
+from raptgen.data import SingleRound, Result
+
+import os 
+dir_path = os.path.dirname(os.path.realpath(__file__))
+default_path = str(Path(f"{dir_path}/../out/embed").resolve())
+
+@click.command(help='achieve sequence vector in embedded space.',
+    context_settings=dict(show_default=True))
+@click.argument("seqpath", type=click.Path(exists=True))
+@click.argument("modelpath", type=click.Path(exists = True))
+@click.option("--use-cuda/--no-cuda", help = "use cuda if available", is_flag=True, default = True)
+@click.option("--cuda-id", help = "the device id of cuda to run", type = int, default = 0)
+@click.option("--fwd", help = "forward adapter", type = str, default=None)
+@click.option("--rev", help = "reverse adapter", type = str, default=None)
+@click.option("--save-dir", help = "path to save results", type = click.Path(), default=default_path)
+def main(seqpath, modelpath, cuda_id, use_cuda, save_dir, fwd, rev):
+    logger = logging.getLogger(__name__)
+    
+    logger.info(f"saving to {save_dir}")
+    save_dir = Path(save_dir).expanduser()
+    save_dir.mkdir(exist_ok = True, parents=True)
+
+    experiment = SingleRound(
+        path = seqpath,
+        forward_adapter = fwd,
+        reverse_adapter = rev)
+    target_len = experiment.random_region_length
+    model = CNN_PHMM_VAE(target_len, embed_size=2)
+    device = torch.device(f"cuda:{cuda_id}" if (use_cuda and torch.cuda.is_available()) else "cpu")
+    model.load_state_dict(torch.load(modelpath, map_location=device))
+
+    result = Result(
+        model,
+        experiment=experiment,
+        path_to_save_results=save_dir,
+        load_if_exists=True
+    )    
+    sequences = experiment.get_filter_passed_sequences(random_only=True)
+    embed_x = result.embed_sequences(sequences)
+    
+    logger.info(f"saving to {save_dir}/embed_seq.csv")
+    with open(save_dir/"embed_seq.csv","w") as f:
+        f.write("index,seq,dim1,dim2\n")
+        for i,(seq,(x1,x2)) in enumerate(zip(sequences, embed_x)):
+            logger.info(f"{seq},({x1:.2f},{x2:.2f})")
+            f.write(f"{i},{seq},{x1},{x2}\n")
+
+if __name__ == "__main__":
+    Path("./.log").mkdir(parents=True, exist_ok=True)
+    formatter = '%(levelname)s : %(name)s : %(asctime)s : %(message)s'
+    logging.basicConfig(
+        filename='.log/logger.log',
+        level=logging.DEBUG,
+        format=formatter)
+        
+    console = logging.StreamHandler()
+    console.setLevel(logging.INFO)
+    logging.getLogger('').addHandler(console)
+    main()
