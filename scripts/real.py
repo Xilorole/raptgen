@@ -9,7 +9,7 @@ import torch
 from torch import optim
 
 from raptgen import models
-from raptgen.models import CNN_PHMM_VAE
+from raptgen.models import CNN_PHMM_VAE, CNN_PHMM_VAE_FAST
 
 from raptgen.data import SequenceGenerator, SingleRound
 
@@ -29,7 +29,9 @@ default_path = str(Path(f"{dir_path}/../out/real").resolve())
 @click.option("--min-count", help = "minimum duplication count to pass sequence for training", type = int, default=1)
 @click.option("--multi", help = "the number of training for multiple times", type = int, default=1)
 @click.option("--reg-epochs", help = "the number of epochs to conduct state transition regularization", type = int, default=50)
-def main(seqpath, epochs, threshold, cuda_id, use_cuda, save_dir, fwd, rev, min_count, multi, reg_epochs):
+@click.option("--embed-size", help = "the number of embedding dimension of raptgen model", type = int, default=2)
+@click.option("--fast", help="[experimental] use fast calculation of probability estimation. Output of the decoder shape is different and the visualizers are not implemented.")
+def main(seqpath, epochs, threshold, cuda_id, use_cuda, save_dir, fwd, rev, min_count, multi, reg_epochs, embed_size, fast):
     logger = logging.getLogger(__name__)
     
     logger.info(f"saving to {save_dir}")
@@ -60,7 +62,10 @@ def main(seqpath, epochs, threshold, cuda_id, use_cuda, save_dir, fwd, rev, min_
     # evaluate model
     target_len = experiment.random_region_length
     for i in range(multi):
-        model = CNN_PHMM_VAE(motif_len=target_len, embed_size=2)
+        if fast:
+            model = CNN_PHMM_VAE(motif_len=target_len, embed_size=embed_size)
+        else:
+            model = CNN_PHMM_VAE_FAST(motif_len=target_len, embed_size=embed_size)
         model_str = str(type(model)).split("\'")[-2].split(".")[-1].lower()
         if multi > 1:
             model_str += f"_{i}"
