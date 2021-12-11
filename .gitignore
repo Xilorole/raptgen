@@ -6,3 +6,4 @@ out/**
 **/*-checkpoint.py
 **/.log
 Pipfile.lock
+.vscode/settings.json
