@@ -20,11 +20,8 @@ GPyOpt = "==1.2.6"
 CairoSVG = "==2.5.1"
 
 [dev-packages]
-<<<<<<< Updated upstream
 black = "*"
-=======
 pylint = "*"
->>>>>>> Stashed changes
 
 [requires]
 python_version = "3.7"
