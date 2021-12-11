@@ -6,7 +6,7 @@ from pathlib import Path
 import torch
 
 from raptgen import models
-from raptgen.models import CNN_PHMM_VAE
+from raptgen.models import CNN_PHMM_VAE, CNN_PHMM_VAE_FAST
 from raptgen.data import SingleRound, Result
 
 import os 
@@ -22,7 +22,8 @@ default_path = str(Path(f"{dir_path}/../out/embed").resolve())
 @click.option("--fwd", help = "forward adapter", type = str, default=None)
 @click.option("--rev", help = "reverse adapter", type = str, default=None)
 @click.option("--save-dir", help = "path to save results", type = click.Path(), default=default_path)
-def main(seqpath, modelpath, cuda_id, use_cuda, save_dir, fwd, rev):
+@click.option("--fast/--normal", help="[experimental] use fast calculation of probability estimation. Output of the decoder shape is different and the visualizers are not implemented.", type =bool, default= False)
+def main(seqpath, modelpath, cuda_id, use_cuda, save_dir, fwd, rev, fast):
     logger = logging.getLogger(__name__)
     
     logger.info(f"saving to {save_dir}")
@@ -34,7 +35,10 @@ def main(seqpath, modelpath, cuda_id, use_cuda, save_dir, fwd, rev):
         forward_adapter = fwd,
         reverse_adapter = rev)
     target_len = experiment.random_region_length
-    model = CNN_PHMM_VAE(target_len, embed_size=2)
+    if fast:
+        model = CNN_PHMM_VAE_FAST(target_len, embed_size=2)
+    else:
+        model = CNN_PHMM_VAE(target_len, embed_size=2)
     device = torch.device(f"cuda:{cuda_id}" if (use_cuda and torch.cuda.is_available()) else "cpu")
     model.load_state_dict(torch.load(modelpath, map_location=device))
 

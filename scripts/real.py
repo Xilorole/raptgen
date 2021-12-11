@@ -30,7 +30,7 @@ default_path = str(Path(f"{dir_path}/../out/real").resolve())
 @click.option("--multi", help = "the number of training for multiple times", type = int, default=1)
 @click.option("--reg-epochs", help = "the number of epochs to conduct state transition regularization", type = int, default=50)
 @click.option("--embed-size", help = "the number of embedding dimension of raptgen model", type = int, default=2)
-@click.option("--fast", help="[experimental] use fast calculation of probability estimation. Output of the decoder shape is different and the visualizers are not implemented.")
+@click.option("--fast/--normal", help="[experimental] use fast calculation of probability estimation. Output of the decoder shape is different and the visualizers are not implemented.", type =bool, default= False)
 def main(seqpath, epochs, threshold, cuda_id, use_cuda, save_dir, fwd, rev, min_count, multi, reg_epochs, embed_size, fast):
     logger = logging.getLogger(__name__)
     
