@@ -87,11 +87,53 @@ To run raptgen with your sequence files, you have to run `real.py`, which trains
 
 ### Train RaptGen using real data
 
-To run the experiment with sequence files, run;
+To run the experiment with sequence files, run `real.py`;
 
 ```shell
 % python3 scripts/real.py data/sample/sample.fasta
 ```
+
+<details>
+<summary>help of real.py</summary>
+
+```
+Usage: real.py [OPTIONS] SEQPATH
+
+  run experiment with real data
+
+Options:
+  --epochs INTEGER        the number of training epochs  [default: 1000]
+  --threshold INTEGER     the number of epochs with no loss update to stop
+                          training  [default: 50]
+
+  --use-cuda / --no-cuda  use cuda if available  [default: True]
+  --cuda-id INTEGER       the device id of cuda to run  [default: 0]
+  --save-dir PATH         path to save results  [default: out/real]
+
+  --fwd TEXT              forward adapter
+  --rev TEXT              reverse adapter
+  --min-count INTEGER     minimum duplication count to pass sequence for
+                          training  [default: 1]
+
+  --multi INTEGER         the number of training for multiple times  [default:
+                          1]
+
+  --reg-epochs INTEGER    the number of epochs to conduct state transition
+                          regularization  [default: 50]
+
+  --embed-size INTEGER    the number of embedding dimension of raptgen model
+                          [default: 2]
+
+  --fast / --normal       [experimental] use fast calculation of probability
+                          estimation. Output of the decoder shape is different
+                          and the visualizers are not implemented.  [default:
+                          False]
+
+  --help                  Show this message and exit.  [default: False]
+```
+
+</details>
+
 
 `.fa`, `.fasta`, and `.fastq` files are automatically processed. The default saving folder is `out/simlulation/real`. The runtime depends on the sequence length and number of unique sequences. The output of this procedure is the followings;
 
@@ -109,6 +151,33 @@ Run;
     data/sample/sample.fasta \
     results/simulation/multiple/cnn_phmm_vae.mdl \
 ```
+
+<details>
+
+<summary>help of encode.py</summary>
+
+```
+Usage: encode.py [OPTIONS] SEQPATH MODELPATH
+
+  achieve sequence vector in embedded space.
+
+Options:
+  --use-cuda / --no-cuda  use cuda if available  [default: True]
+  --cuda-id INTEGER       the device id of cuda to run  [default: 0]
+  --fwd TEXT              forward adapter
+  --rev TEXT              reverse adapter
+  --save-dir PATH         path to save results  [default: out/encode]
+
+  --fast / --normal       [experimental] use fast calculation of probability
+                          estimation. Output of the decoder shape is different
+                          and the visualizers are not implemented.  [default:
+                          False]
+
+  --help                  Show this message and exit.  [default: False]
+```
+
+</details>
+
 
 This will output sequences' representation vector in the following format;
 
@@ -130,6 +199,30 @@ To reconstruct sequence from the latent space, use `decode.py`. Given the model 
     results/simulation/multiple/cnn_phmm_vae.mdl \
     20
 ```
+
+<details>
+<summary>help of decode.py</summary>
+
+```
+Usage: decode.py [OPTIONS] POS_PATH MODEL_PATH TARGET_LEN
+
+  achieve sequence vector in embedded space.
+
+Options:
+  --use-cuda / --no-cuda  use cuda if available  [default: True]
+  --cuda-id INTEGER       the device id of cuda to run  [default: 0]
+  --save-dir PATH         path to save results  [default: out/decode]
+
+  --embed-dim INTEGER     the embedding dimension of raptgen model  [default:
+                          2]
+
+  --eval-max INTEGER      the maximum number of sequence to evaluate most
+                          probable sequence  [default: 256]
+
+  --help                  Show this message and exit.  [default: False]
+```
+
+</details>
 
 This will input csv with the identifier columns followed by dimension info;
 
@@ -161,6 +254,26 @@ To select the center of the GMM populations, run;
     data/sample/cnn_phmm_vae.mdl
 ```
 
+<details>
+<summary>help of gmm.py</summary>
+
+```
+Usage: gmm.py [OPTIONS] SEQPATH MODELPATH
+
+  select gmm center with trained model
+
+Options:
+  --use-cuda / --no-cuda  use cuda if available  [default: True]
+  --cuda-id INTEGER       the device id of cuda to run  [default: 0]
+  --save-dir PATH         path to save results  [default: out/gmm]
+
+  --fwd TEXT              forward adapter
+  --rev TEXT              reverse adapter
+  --help                  Show this message and exit.  [default: False]
+```
+
+</details>
+
 This will output the top 10 sequences to a specified directory (default out/gmm/gmm_seq.csv).
 
 ### Run BO
@@ -173,6 +286,25 @@ To conduct multipoint Bayesian optimization, run;
     results/real/A_best.mdl \
     results/real/A_evaled.csv
 ```
+
+<details><summary>help of bo.py</summary>
+
+```
+Usage: bo.py [OPTIONS] SEQPATH MODELPATH EVALPATH
+
+  run Bayesian optimization with trained model and evaluated results
+
+Options:
+  --use-cuda / --no-cuda  use cuda if available  [default: True]
+  --cuda-id INTEGER       the device id of cuda to run  [default: 0]
+  --fwd TEXT              forward adapter
+  --rev TEXT              reverse adapter
+  --save-dir PATH         path to save results  [default: out/bo]
+
+  --help                  Show this message and exit.  [default: False]
+```
+
+</details>
 
 The evaluates sequences should only hold the random region, and each row should be written in  `[string],[value]` format.
 
@@ -205,6 +337,43 @@ To run the experiment with multiple sequence motifs, run;
 % python3 scripts/multiple.py
 ```
 
+<details><summary>help of multiple.py</summary>
+
+```
+Usage: multiple.py [OPTIONS]
+
+  run experiment with multiple motif
+
+Options:
+  --n-motif INTEGER          the number of motifs  [default: 10]
+  --n-seq INTEGER            the number of the sequence to generate  [default:
+                             10000]
+
+  --seed INTEGER             seed for seqeunce generation reproduction
+                             [default: 0]
+
+  --error-rate FLOAT         the ratio to modify sequence  [default: 0.1]
+  --epochs INTEGER           the number of training epochs  [default: 1000]
+  --threshold INTEGER        the number of epochs with no loss update to stop
+                             training  [default: 50]
+
+  --use-cuda / --no-cuda     use cuda if available  [default: True]
+  --cuda-id INTEGER          the device id of cuda to run  [default: 0]
+  --save-dir PATH            path to save results  [default: /home/natsuki-
+                             iwano/raptgen-xilorole/out/simlulation/multiple]
+
+  --reg-epochs INTEGER       the number of epochs to conduct state transition
+                             regularization  [default: 50]
+
+  --multi INTEGER            the number of training for multiple times
+                             [default: 1]
+
+  --only-cnn / --all-models  train all encoder types or not  [default: False]
+  --help                     Show this message and exit.  [default: False]
+```
+
+</details>
+
 This outputs models (`[MODEL_NAME].mdl`) and its training result (`[MODEL_NAME].csv`) into specified folder (default is out/simlulation/multiple). A single run takes approximately 20 hours on Tesla V100 GPU.
 
 ### Evaluating paired-motifs
@@ -214,6 +383,42 @@ To run the experiment with paired sequence motifs, run;
 ```shell
 % python3 scripts/paired.py
 ```
+
+
+<details><summary>help of paired.py</summary>
+
+```
+Usage: paired.py [OPTIONS]
+
+  run experiment with paired motif
+
+Options:
+  --n-seq INTEGER            the number of the sequence to generate  [default:
+                             5000]
+
+  --seed INTEGER             seed for seqeunce generation reproduction
+                             [default: 0]
+
+  --epochs INTEGER           the number of training epochs  [default: 1000]
+  --threshold INTEGER        the number of epochs with no loss update to stop
+                             training  [default: 50]
+
+  --use-cuda / --no-cuda     use cuda if available  [default: True]
+  --cuda-id INTEGER          the device id of cuda to run  [default: 0]
+  --save-dir PATH            path to save results  [default: /home/natsuki-
+                             iwano/raptgen-xilorole/out/simlulation/paired]
+
+  --reg-epochs INTEGER       the number of epochs to conduct state transition
+                             regularization  [default: 50]
+
+  --multi INTEGER            the number of training for multiple times
+                             [default: 1]
+
+  --only-cnn / --all-models  train all encoder types or not  [default: False]
+  --help                     Show this message and exit.  [default: False]
+```
+
+</details>
 
 The default saving folder is out/simlulation/paired. A single run takes approximately 10 hours on Tesla V100 GPU.
 
