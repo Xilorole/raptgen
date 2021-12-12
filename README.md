@@ -13,11 +13,11 @@ For other requirements, see [Pipfile](Pipfile). Also We verified that the codes 
 % pipenv install
 ```
 
-The install time was about 10 minutes on MacbookPro 2020 Core i5 16G. You may also need to install `cairo` library to generate profile hmm image. For mac OS X, it can be installed by `brew install cairo && brew install pango`. For Ubuntu `sudo apt-get install -y libcairo2` would work.
+The install time was about 10 minutes on MacbookPro 2020 Core i5 16G. You may also need to install `cairo` library to generate profile hmm image. For mac OS X, it can be installed by `brew install cairo && brew install pango`. For Ubuntu, `sudo apt-get install -y libcairo2` would work.
 
 ## Quickstart
 
-All scripts has `--help` command that print the options and the arguments if required. For example,
+All scripts have `--help` command that prints the options and the arguments if required. For example,
 
 ```shell
 % python scripts/multiple.py --help 
@@ -61,45 +61,29 @@ filtering with : AAAAA(5N)-20N-GGGGG(5N)
 experiment name : 20211128_210830338899
 # of sequences -> 100
 
-[1] 139 itr  26.23 <->  26.99 ( 25.85+  1.14) of _vae.mdl..:  14%|█       | 139/1000 [02:38<16:16,  1.13s/it]
+[1] 139 itr  26.2 <->  26.9 (25.8+ 1.1) of _vae.mdl..:  14%|█    | 13/100 [02:38<16:16,  11s/it]
 ```
 
-The last line indicates the training status. The loss, iteration number, estimated time for training and etc. are shown.
+The last line indicates the training status. The loss, iteration number, estimated time for training, etc., are shown.
 
 ```
-[1] 139 itr  26.23 <->  26.99 ( 25.85+  1.14) of _vae.mdl..:  14%|█       | 139/1000 [02:38<16:16,  1.13s/it]
-^^^          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^    ^^^^^^^^^^
- |           train & valid (recon+norm.) loss  model filename
- |
-number of epochs with no validation loss update.
+[1] 139 itr  26.2 <->  26.9 (25.8+ 1.1) of _vae.mdl..:  14%|█    | 13/100 [02:38<16:16,  11s/it]
+^^^          ^^^^      ^^^^^^^^^^^^^^^^    ^^^^^^^^^^   ^^^        ^^^^^^  ^^^^^^^^^^^   ^^^^^^   
+(1)          (2)             (3)              (4)       (5)         (6)        (7)        (8)
 ```
 
-
-## To evaluate multi-/pair- motif for testing
-
-### Evaluating multi-motifs
-
-To run the experiment with multiple sequence motifs, run;
-
-```shell
-% python3 scripts/multiple.py
-```
-
-This outputs models (`[MODEL_NAME].mdl`) and its training result (`[MODEL_NAME].csv`) into specified folder (default is out/simlulation/multiple). A single run takes approximately 20 hours on Tesla V100 GPU.
-
-### Evaluating paired-motifs
-
-To run the experiment with paired sequence motifs, run;
-
-```shell
-% python3 scripts/paired.py
-```
-
-The default saving folder is out/simlulation/paired. A single run takes approximately 10 hours on Tesla V100 GPU.
+1. the number of epochs with no validation loss update.
+2. train loss
+3. valid (recon+norm.) loss
+4. model name
+5. training progress
+6. number of iteration
+7. elapsed time / estimate time of training
+8. training speed
 
 ## To evaluate real data
 
-In order to run raptgen with your own sequence files, you have to run `real.py` which trains the model which encode sequence into representation vector.
+To run raptgen with your sequence files, you have to run `real.py`, which trains the model which encodes sequence into representation vector.
 
 ### Train RaptGen using real data
 
@@ -109,14 +93,14 @@ To run the experiment with sequence files, run;
 % python3 scripts/real.py data/sample/sample.fasta
 ```
 
-`.fa`, `.fasta`, and `.fastq` files are automatically processed. The default saving folder is `out/simlulation/real`. The runtime depends on the sequence length and number of unique sequences. The output of this procedure are the followings;
+`.fa`, `.fasta`, and `.fastq` files are automatically processed. The default saving folder is `out/simlulation/real`. The runtime depends on the sequence length and number of unique sequences. The output of this procedure is the followings;
 
 * trained model : `[MODEL_NAME].mdl`, such as `cnn_phmm_vae.mdl`
 * model loss transition: `[MODEL_NAME].csv`, such as `cnn_phmm_var.csv`
 
-### Encode sequence to achieve latent represantation
+### Encode sequence to achieve latent representation
 
-To embded the sequence, use `encode.py` which input sequences and trained model and output sequences' representation vector. While the VAE model encodes the sequence into the latent space in the form of distribution, the output representation vector is the center of this distribution. 
+To embed the sequence, use `encode.py`, which input sequences and trained model and output sequences' representation vector. While the VAE model encodes the sequence into the latent space in the form of distribution, the output representation vector is the center of this distribution. 
 
 Run;
 
@@ -126,7 +110,7 @@ Run;
     results/simulation/multiple/cnn_phmm_vae.mdl \
 ```
 
-This will output sequences' representation vector in the following format
+This will output sequences' representation vector in the following format;
 
 ```csv
 index,seq,dim1,dim2
@@ -138,7 +122,7 @@ index,seq,dim1,dim2
 The default saving path is `out/encode/embed_seq.csv`.
 ### Decode latent point to most_probable sequence
 
-To reconstruct sequence from the latent space, use `decode.py`. Given the model parameters and data points, raptgen model would sample most probable seqeuence from the derived profile HMM. Note that the model length has to be explicitly passed to the script in order to initialize the model.
+To reconstruct sequence from the latent space, use `decode.py`. Given the model parameters and data points, the raptgen model would sample the most probable sequence from the derived profile HMM. Note that the model length has to be explicitly passed to the script to initialize the model.
 
 ```shell
 % python3 scripts/decode.py \
@@ -177,7 +161,7 @@ To select the center of the GMM populations, run;
     data/sample/cnn_phmm_vae.mdl
 ```
 
-this will output top 10 sequence to specified directory (default out/gmm/gmm_seq.csv).
+This will output the top 10 sequences to a specified directory (default out/gmm/gmm_seq.csv).
 
 ### Run BO
 
@@ -190,7 +174,7 @@ To conduct multipoint Bayesian optimization, run;
     results/real/A_evaled.csv
 ```
 
-The evaluates seuqneces should hold random region only and each row should be written in  `[string],[value]` format.
+The evaluates sequences should only hold the random region, and each row should be written in  `[string],[value]` format.
 
 ```text
 AACGAGAGATGGTAGACCTATCTTTTAGCC,79.0
@@ -199,7 +183,10 @@ TTTTATAAAAAAGTGTTTAAAAAAGATTCA,-3.6
 ...
 ```
 
-The result contains the sequence to be evaluated, the position of the motif embedding, and the embedding of the most probable sequence (`re_`).
+The result contains:
+* The sequence is to be evaluated.
+* The position of the motif embedding.
+* The embedding of the most probable sequence (`re_`).
 
 ```shell
 % cat out/bo/bo_seq.csv
@@ -207,6 +194,30 @@ bo_index,seq,x,y,re_x,re_y
 0,GTAGAGATTCTGAGGGTTCTCCTGTTGACC,1.53,-0.13,1.60,-0.50
 1,GTAGAGATTCTGAGGGTTCTCCTGTTGCCA,1.56,-0.58,1.62,-0.47
 ```
+
+## To evaluate multi-/pair- motif for testing
+
+### Evaluating multi-motifs
+
+To run the experiment with multiple sequence motifs, run;
+
+```shell
+% python3 scripts/multiple.py
+```
+
+This outputs models (`[MODEL_NAME].mdl`) and its training result (`[MODEL_NAME].csv`) into specified folder (default is out/simlulation/multiple). A single run takes approximately 20 hours on Tesla V100 GPU.
+
+### Evaluating paired-motifs
+
+To run the experiment with paired sequence motifs, run;
+
+```shell
+% python3 scripts/paired.py
+```
+
+The default saving folder is out/simlulation/paired. A single run takes approximately 10 hours on Tesla V100 GPU.
+
+
 
 ## Directory structure
 
