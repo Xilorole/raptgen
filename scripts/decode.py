@@ -24,20 +24,20 @@ import numpy as np
 
 import os 
 dir_path = os.path.dirname(os.path.realpath(__file__))
-default_path = str(Path(f"{dir_path}/../out/embed").resolve())
+default_path = str(Path(f"{dir_path}/../out/decode").resolve())
 
 @click.command(help='achieve sequence vector in embedded space.',
     context_settings=dict(show_default=True))
-@click.argument("model-path", help="the path of the saved model parameters", type=click.Path(exists = True))
-@click.argument("pos-path", help="embedded point to generate profile HMM model", type=click.Path(exists=True))
-@click.option("--target-len", help="length of the random region of SELEX experiment", type=int)
+@click.argument("pos-path", type=click.Path(exists=True))
+@click.argument("model-path",type=click.Path(exists = True))
+@click.argument("target-len", type=int)
 @click.option("--use-cuda/--no-cuda", help = "use cuda if available", is_flag=True, default = True)
-@click.option("--generate-seq", help = "whether or not to create most probable sequence", is_flag=True, default = True)
+# @click.option("--generate-seq", help = "whether or not to create most probable sequence", is_flag=True, default = True)
 @click.option("--cuda-id", help = "the device id of cuda to run", type = int, default = 0)
 @click.option("--save-dir", help = "path to save results", type = click.Path(), default=default_path)
 @click.option("--embed-dim", help="the embedding dimension of raptgen model", type=int, default=2)
 @click.option("--eval-max", help="the maximum number of sequence to evaluate most probable sequence", type=int, default=256)
-def main(model_path, pos_path, target_len, cuda_id, use_cuda, save_dir, fwd, rev, embed_dim, eval_max):
+def main(pos_path, model_path, target_len, cuda_id, use_cuda, save_dir, embed_dim, eval_max):
     """generate sequences from embedded sequences. Given the position of the sequence,
     the reconstructed profile HMM model is calculated.
     """
@@ -47,11 +47,6 @@ def main(model_path, pos_path, target_len, cuda_id, use_cuda, save_dir, fwd, rev
     save_dir = Path(save_dir).expanduser()
     save_dir.mkdir(exist_ok = True, parents=True)
 
-    # turn given position to torch tensor
-    # 1. 指定したファイルの中身を読み込む。
-    # 2. 座標を取得してdecoderに投げる
-    # 3. 出力dirにパラメータをnpy形式で保存する
-    # 4. most_probable_sequenceを出力する
     device = torch.device(f"cuda:{cuda_id}" if (use_cuda and torch.cuda.is_available()) else "cpu")
     
     df = pd.read_csv(pos_path)

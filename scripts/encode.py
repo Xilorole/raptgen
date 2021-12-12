@@ -11,7 +11,7 @@ from raptgen.data import SingleRound, Result
 
 import os 
 dir_path = os.path.dirname(os.path.realpath(__file__))
-default_path = str(Path(f"{dir_path}/../out/embed").resolve())
+default_path = str(Path(f"{dir_path}/../out/encode").resolve())
 
 @click.command(help='achieve sequence vector in embedded space.',
     context_settings=dict(show_default=True))
@@ -51,13 +51,15 @@ def main(seqpath, modelpath, cuda_id, use_cuda, save_dir, fwd, rev, fast):
     sequences = experiment.get_filter_passed_sequences(random_only=True)
     embed_x = result.embed_sequences(sequences)
     
+    dims = embed_x.shape[1]
     logger.info(f"saving to {save_dir}/embed_seq.csv")
     with open(save_dir/"embed_seq.csv","w") as f:
-        f.write("index,seq,dim1,dim2\n")
-        for i,(seq,(x1,x2)) in enumerate(zip(sequences, embed_x)):
-            logger.info(f"{seq},({x1:.2f},{x2:.2f})")
-            f.write(f"{i},{seq},{x1},{x2}\n")
+        f.write("index,seq,"+",".join([f"dim{dim+1}" for dim in range(dims)])+"\n")
+        for i,(seq, X) in enumerate(zip(sequences, embed_x)):
+            f.write(f"{i},{seq},"+",".join(list(map(lambda x: f"{x}", X)))+"\n")
 
+    logger.info(f"... done.")
+    
 if __name__ == "__main__":
     Path("./.log").mkdir(parents=True, exist_ok=True)
     formatter = '%(levelname)s : %(name)s : %(asctime)s : %(message)s'
