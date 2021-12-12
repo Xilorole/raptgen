@@ -50,7 +50,7 @@ def train(epochs, model, train_loader, test_loader, optimizer, loss_fn=None, dev
             for data in train_loader:
                 data = data.to(device)
                 optimizer.zero_grad()
-                if loss_fn == profile_hmm_loss_fn and epoch <= force_epochs:
+                if loss_fn in {profile_hmm_loss_fn, profile_hmm_loss_fn_fast} and epoch <= force_epochs:
                     loss = loss_fn(data, *model(data), beta=beta,
                                    force_matching=force_matching, match_cost=1+4*(1-epoch/force_epochs))
                 else:
@@ -207,11 +207,11 @@ def profile_hmm_loss(recon_param, input, force_matching=False, match_cost=5):
     return - torch.logsumexp(F[:, :, motif_len, random_len], dim=1).mean()
 
 
-def torch_multi_polytope_dp_log(transition_proba, emission_proba, output):
+def torch_multi_polytope_dp_log(transition_proba, emission_proba, output, force_matching=False, match_cost=5):
     """
     torch_multi_polytope_dp_log(
-        emission_proba,
         transition_proba,
+        emission_proba,
         output
     )
 
@@ -224,15 +224,15 @@ def torch_multi_polytope_dp_log(transition_proba, emission_proba, output):
 
     Parameters
     ----------
-    emission_proba : torch.Tensor
-        the tensor which emit characters. the tensor shape
-        has to be (`batch`, `from`=3, `to`=3, `model_length`+1) and
-        the tensor has to be logarithmic number
-
     transition_proba : torch.Tensor
         the tensor which define the probability to transit
-        state to state. the tensor shape has to be:
-        (`batch`, `model_length`, `augc`=4)
+        state to state. the tensor shape has to be 
+        (`batch`, `from`=3, `to`=3, `model_length`+1) and
+        the tensor has to be logarithmic number
+
+    emission_proba : torch.Tensor
+        the tensor which emit characters. The tensor shape 
+        has to be: (`batch`, `model_length`, `augc`=4)
 
     output : torch.Tensor
         the tensor of the output vector. the tensor shape
@@ -283,7 +283,10 @@ def torch_multi_polytope_dp_log(transition_proba, emission_proba, output):
                     transition_proba[:, :, State.D,
                                      model_index_pre - d_slice - 1]
                     + F[:, :, model_index_pre - 1, d_slice], axis=1)
-
+    if force_matching:
+        return -torch.logsumexp(F[:, :, -1, -1] + transition_proba[:, :, State.M, -1], axis=1).mean()\
+            - np.log((match_cost+1)*match_cost/2) \
+            - torch.sum((match_cost-1) * transition_proba[:, State.M, State.M, :], dim=1).mean()
     return -torch.logsumexp(F[:, :, -1, -1] + transition_proba[:, :, State.M, -1], axis=1).mean()
 
 
@@ -320,7 +323,7 @@ def profile_hmm_loss_fn(input, recon_param, mu, logvar, debug=False, test=False,
 
 
 def profile_hmm_loss_fn_fast(input, recon_param, mu, logvar, debug=False, test=False, beta=1, force_matching=False, match_cost=5):
-    phmmloss = torch_multi_polytope_dp_log(*recon_param, input)
+    phmmloss = torch_multi_polytope_dp_log(*recon_param, input, force_matching, match_cost)
     kld = kld_loss(mu, logvar)
 
     if debug:
