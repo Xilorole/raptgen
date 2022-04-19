@@ -1,5 +1,7 @@
 # Supplementary code for "RaptGen: A variational autoencoder with profile hidden Markov model for generative aptamer discovery"
 
+[![DOI](https://zenodo.org/badge/339321685.svg)](https://zenodo.org/badge/latestdoi/339321685)
+
 ## Tested environment
 
 * Ubuntu == 18.04
