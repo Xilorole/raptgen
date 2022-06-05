@@ -1,4 +1,4 @@
-# Supplementary code for "RaptGen: A variational autoencoder with profile hidden Markov model for generative aptamer discovery"
+# Supplementary code for "Generative aptamer discovery using RaptGen"
 
 [![DOI](https://zenodo.org/badge/339321685.svg)](https://zenodo.org/badge/latestdoi/339321685)
 
